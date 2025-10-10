@@ -1,0 +1,131 @@
+import pandas as pd
+from sklearn.metrics.pairwise import cosine_similarity
+import numpy as np
+
+class MoodBasedRecommender:
+    """
+    A music recommender system based on song audio features and categorized moods.
+    """
+    def __init__(self, data_path):
+        """
+        Initializes the recommender by loading and preprocessing the data.
+        
+        Args:
+            data_path (str): The file path to the CSV dataset of songs.
+        """
+        try:
+            self.songs_df = pd.read_csv(data_path)
+        except FileNotFoundError:
+            print(f"Error: The file '{data_path}' was not found.")
+            print("Please download the dataset and place it in the correct directory.")
+            # You can find a suitable dataset here: https://www.kaggle.com/datasets/mrmorj/dataset-of-songs-in-spotify
+            self.songs_df = pd.DataFrame() # Create an empty dataframe to prevent further errors
+            return
+
+        # Define the numerical features to be used for mood categorization and similarity
+        self.feature_cols = ['valence', 'energy', 'danceability', 'acousticness', 'instrumentalness', 'liveness', 'speechiness']
+        
+        # Drop rows with missing values in key columns
+        self.songs_df.dropna(subset=['name', 'artists'] + self.feature_cols, inplace=True)
+        
+        # Normalize the features to be between 0 and 1
+        self.songs_df[self.feature_cols] = self.songs_df[self.feature_cols].apply(lambda x: (x - x.min()) / (x.max() - x.min()))
+        
+        # Apply the mood categorization
+        self.songs_df['mood'] = self.songs_df.apply(self.categorize_mood, axis=1)
+        print("Dataset loaded and moods categorized successfully.")
+
+    def categorize_mood(self, row):
+        """
+        Categorizes a song into a mood based on its audio features.
+        
+        Args:
+            row (pd.Series): A row from the songs DataFrame.
+            
+        Returns:
+            str: The categorized mood label.
+        """
+        if row['valence'] > 0.65 and row['energy'] > 0.65 and row['danceability'] > 0.6:
+            return 'Happy/Energetic'
+        elif row['valence'] < 0.35 and row['energy'] < 0.4:
+            return 'Sad/Melancholic'
+        elif row['energy'] < 0.45 and row['acousticness'] > 0.5:
+            return 'Calm/Relaxing'
+        elif row['energy'] > 0.75 and row['valence'] < 0.4:
+            return 'Angry/Intense'
+        else:
+            return 'Neutral' # A catch-all for songs that don't fit neatly
+
+    def recommend(self, mood, n_recommendations=10):
+        """
+        Recommends songs based on a specified mood.
+        
+        Args:
+            mood (str): The desired mood (e.g., 'Happy/Energetic').
+            n_recommendations (int): The number of songs to recommend.
+            
+        Returns:
+            pd.DataFrame: A DataFrame of recommended songs.
+        """
+        if self.songs_df.empty:
+            print("Cannot make recommendations because the dataset is empty.")
+            return pd.DataFrame()
+            
+        # Filter songs that match the desired mood
+        mood_songs = self.songs_df[self.songs_df['mood'] == mood]
+        
+        if mood_songs.empty:
+            print(f"No songs found for the mood: {mood}")
+            return pd.DataFrame()
+
+        # Select a random song from the mood subset to act as a 'seed' for similarity
+        seed_song = mood_songs.sample(1)
+        
+        # Calculate cosine similarity between the seed song and all other songs in the mood subset
+        seed_features = seed_song[self.feature_cols].values
+        mood_features = mood_songs[self.feature_cols].values
+        
+        cosine_scores = cosine_similarity(seed_features, mood_features)
+        
+        # Get the indices of the most similar songs
+        sim_scores = list(enumerate(cosine_scores[0]))
+        sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+        
+        # Get the top N song indices, excluding the seed song itself (which is always at index 0 after sorting)
+        top_song_indices = [i[0] for i in sim_scores[1:n_recommendations+1]]
+        
+        # Return the recommended songs as a DataFrame
+        recommendations = mood_songs.iloc[top_song_indices][['name', 'artists', 'mood']]
+        return recommendations
+
+# --- Example of How to Use the Recommender ---
+if __name__ == '__main__':
+    # IMPORTANT: Download a dataset and update the path.
+    # A good dataset for this is the "Dataset of songs in Spotify" on Kaggle:
+    # https://www.kaggle.com/datasets/mrmorj/dataset-of-songs-in-spotify
+    # Download it and place 'tracks.csv' in the same directory as this script.
+    DATASET_PATH = 'tracks.csv'
+    
+    recommender = MoodBasedRecommender(DATASET_PATH)
+
+    # Check if the recommender was initialized properly before using it
+    if not recommender.songs_df.empty:
+        print("\n--- Getting Recommendations ---")
+        
+        # Get recommendations for a 'Happy/Energetic' mood
+        happy_mood = 'Happy/Energetic'
+        print(f"\nRecommendations for a '{happy_mood}' mood:")
+        happy_recs = recommender.recommend(happy_mood)
+        print(happy_recs)
+        
+        # Get recommendations for a 'Sad/Melancholic' mood
+        sad_mood = 'Sad/Melancholic'
+        print(f"\nRecommendations for a '{sad_mood}' mood:")
+        sad_recs = recommender.recommend(sad_mood)
+        print(sad_recs)
+
+        # Get recommendations for a 'Calm/Relaxing' mood
+        calm_mood = 'Calm/Relaxing'
+        print(f"\nRecommendations for a '{calm_mood}' mood:")
+        calm_recs = recommender.recommend(calm_mood)
+        print(calm_recs)
