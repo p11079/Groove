@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Recommender 🎵</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Music Recommender</h1>
+        <p>Find songs by name, or get a playlist based on your mood!</p>
+        
+        <div class="tab-buttons">
+            <button class="tab-btn active" data-tab="song">By Song</button>
+            <button class="tab-btn" data-tab="mood">By Mood</button>
+        </div>
+
+        <div class="tab-content-container">
+            <div id="song" class="tab-content active">
+                <input type="text" id="song-input" placeholder="E.g., Bohemian Rhapsody">
+            </div>
+            <div id="mood" class="tab-content">
+                <select id="mood-select">
+                    <option value="happy">Happy 😊</option>
+                    <option value="sad">Sad 😢</option>
+                    <option value="chill">Chill 🧘</option>
+                    <option value="energetic">Energetic ⚡</option>
+                </select>
+            </div>
+        </div>
+
+        <button id="recommend-btn">Get Recommendations</button>
+
+        <hr>
+        <h2>Recommendations:</h2>
+        <ul id="results-list">
+            </ul>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

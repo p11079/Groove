@@ -1,0 +1,121 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: #121212;
+    color: #e0e0e0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    margin: 0;
+    padding: 2rem 0;
+}
+
+.container {
+    background: #181818;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    width: 90%;
+    max-width: 600px;
+    border: 1px solid #282828;
+}
+
+h1 {
+    color: #1DB954;
+}
+
+p {
+    color: #b3b3b3;
+}
+
+hr {
+    border-color: #282828;
+    margin: 25px 0;
+}
+
+/* Tab Styles */
+.tab-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    background-color: #282828;
+    border: 1px solid #404040;
+    color: #b3b3b3;
+    border-radius: 20px;
+    transition: all 0.2s ease-in-out;
+}
+
+.tab-btn.active {
+    background-color: #1DB954;
+    color: white;
+    border-color: #1DB954;
+}
+
+.tab-content {
+    display: none; /* Hide inactive tabs */
+}
+
+.tab-content.active {
+    display: block; /* Show active tab */
+}
+
+/* Input Styles */
+#song-input, #mood-select {
+    width: 100%;
+    box-sizing: border-box; /* Important for 100% width */
+    padding: 12px;
+    background-color: #282828;
+    border: 1px solid #404040;
+    color: #e0e0e0;
+    border-radius: 25px;
+    font-size: 16px;
+    padding-left: 20px;
+}
+#mood-select {
+    -webkit-appearance: none;
+    appearance: none;
+}
+#song-input:focus, #mood-select:focus {
+    outline: none;
+    border-color: #1DB954;
+}
+
+#recommend-btn {
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px 24px;
+    border: none;
+    background-color: #1DB954;
+    color: white;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+#recommend-btn:hover { background-color: #1ed760; }
+#recommend-btn:disabled { background-color: #535353; cursor: not-allowed; }
+
+/* Result List Styles */
+#results-list { list-style-type: none; padding: 0; margin-top: 20px; }
+.result-card { background: #282828; padding: 15px; border: 1px solid #404040; margin-top: 10px; border-radius: 8px; text-align: left; transition: background-color 0.2s; display: flex; justify-content: space-between; align-items: center; }
+.result-card:hover { background-color: #383838; }
+.result-card .song-details { flex-grow: 1; }
+.result-card strong { font-size: 1.1em; color: #ffffff; }
+.result-card .artist { color: #b3b3b3; font-size: 0.9em; }
+.result-card.original-song { background-color: #2a3a31; border-color: #1DB954; }
+
+.play-btn { text-decoration: none; color: #1DB954; font-weight: bold; padding: 8px 12px; border: 1px solid #1DB954; border-radius: 20px; transition: background-color 0.2s, color 0.2s; margin-left: 15px; }
+.play-btn:hover { background-color: #1DB954; color: white; }
+
+.loader { border: 3px solid #535353; border-top: 3px solid #ffffff; border-radius: 50%; width: 18px; height: 18px; animation: spin 1s linear infinite; margin: 0 auto; }
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
