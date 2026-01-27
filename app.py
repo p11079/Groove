@@ -3,7 +3,7 @@ from flask_cors import CORS
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics.pairwise import cosine_similarity
-import os
+import os 
 
 # --- INITIALIZATION ---
 app = Flask(__name__, static_folder='../frontend', static_url_path='')
@@ -115,4 +115,5 @@ def get_recommendations_by_mood():
     return jsonify(recommendations_list)
 
 if __name__ == '__main__':
+
     app.run(debug=True)
